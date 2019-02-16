@@ -828,10 +828,10 @@ void jailbreak()
     {
         // Initialize patchfinder64.
         
-        LOG("Initializing patchfinder64...");
+        /* LOG("Initializing patchfinder64...");
         SETMESSAGE(NSLocalizedString(@"Failed to initialize patchfinder64.", nil));
         _assert(init_kernel(kread, kernel_base, NULL) == ERR_SUCCESS, message, true);
-        LOG("Successfully initialized patchfinder64.");
+        LOG("Successfully initialized patchfinder64."); */
     }
     
     UPSTAGE();
@@ -840,7 +840,26 @@ void jailbreak()
         // Find offsets.
         
         LOG("Finding offsets...");
-#define PF(x) do { \
+        size_t size;
+        sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+        char *modelChar = malloc(size);
+        sysctlbyname("hw.machine", modelChar, &size, NULL, 0);
+        NSString * deviceModel = [NSString stringWithUTF8String:modelChar];
+        free(modelChar);
+        if ([deviceModel isEqualToString:@"iPhone6,1"] || [deviceModel isEqualToString:@"iPhone6,2"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF008903CE0 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF008872200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPod7,1"]) {
+            LOG("DEVICE MAY NOT BE SUPPORTED BY THIS BUILD BUT YOU CAN TRY I GUESS", nil);
+            SETOFFSET(shenanigans, 0xFFFFFFF008903CE0 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF008872200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPad4,1"] || [deviceModel isEqualToString:@"iPad4,2"] || [deviceModel isEqualToString:@"iPad4,3"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF00890BC40 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF00887A200 + kernel_slide);
+        }
+        
+            
+/*#define PF(x) do { \
         SETMESSAGE(NSLocalizedString(@"Failed to find " #x " offset.", nil)); \
         SETOFFSET(x, find_ ##x()); \
         LOG(#x " = " ADDR " + " ADDR, GETOFFSET(x) - kernel_slide, kernel_slide); \
@@ -864,6 +883,7 @@ void jailbreak()
             PF(fs_lookup_snapshot_metadata_by_name_and_return_name);
             PF(apfs_jhash_getvnode);
         }
+         */
 #undef PF
         found_offsets = true;
         LOG("Successfully found offsets.");
@@ -871,17 +891,16 @@ void jailbreak()
     
     UPSTAGE();
     
-    {
+    /*{
         // Deinitialize patchfinder64.
         
         LOG("Deinitializing patchfinder64...");
         SETMESSAGE(NSLocalizedString(@"Failed to deinitialize patchfinder64.", nil));
         term_kernel();
         LOG("Successfully deinitialized patchfinder64.");
-    }
+    } */
     
     UPSTAGE();
-    
     {
         // Escape Sandbox.
         static uint64_t ShenanigansPatch = 0xca13feba37be;
@@ -909,6 +928,40 @@ void jailbreak()
     
     UPSTAGE();
     
+    {
+        if (prefs.overwrite_boot_nonce) {
+            // Unlock nvram.
+            
+            LOG("Unlocking nvram...");
+            SETMESSAGE(NSLocalizedString(@"Failed to unlock nvram.", nil));
+            _assert(unlocknvram() == ERR_SUCCESS, message, true);
+            LOG("Successfully unlocked nvram.");
+            
+            const char *bootNonceKey = "com.apple.System.boot-nonce";
+            if (runCommand("/usr/sbin/nvram", bootNonceKey, NULL) != ERR_SUCCESS ||
+                strstr(lastSystemOutput.bytes, prefs.boot_nonce) == NULL) {
+                // Set boot-nonce.
+                
+                LOG("Setting boot-nonce...");
+                SETMESSAGE(NSLocalizedString(@"Failed to set boot-nonce.", nil));
+                _assert(runCommand("/usr/sbin/nvram", [NSString stringWithFormat:@"%s=%s", bootNonceKey, prefs.boot_nonce].UTF8String, NULL) == ERR_SUCCESS, message, true);
+                _assert(runCommand("/usr/sbin/nvram", [NSString stringWithFormat:@"%s=%s", kIONVRAMForceSyncNowPropertyKey, bootNonceKey].UTF8String, NULL) == ERR_SUCCESS, message, true);
+                LOG("Successfully set boot-nonce.");
+            }
+            
+            // Lock nvram.
+            
+            LOG("Locking nvram...");
+            SETMESSAGE(NSLocalizedString(@"Failed to lock nvram.", nil));
+            _assert(locknvram() == ERR_SUCCESS, message, true);
+            LOG("Successfully locked nvram.");
+            SETMESSAGE(NSLocalizedString(@"Successfully set boot nonce! You can begin restoring now!", nil));
+            _assert(locknvram() != ERR_SUCCESS, message, true);
+            INSERTSTATUS(NSLocalizedString(@"Overwrote boot nonce.\n", nil));
+        }
+    }
+    
+    UPSTAGE();
     {
         // Set HSP4.
         
@@ -941,6 +994,9 @@ void jailbreak()
     
     UPSTAGE();
     
+    
+    
+    
     {
         // Write a test file to UserFS.
         
@@ -972,39 +1028,6 @@ void jailbreak()
     
     UPSTAGE();
     
-    {
-        if (prefs.overwrite_boot_nonce) {
-            // Unlock nvram.
-            
-            LOG("Unlocking nvram...");
-            SETMESSAGE(NSLocalizedString(@"Failed to unlock nvram.", nil));
-            _assert(unlocknvram() == ERR_SUCCESS, message, true);
-            LOG("Successfully unlocked nvram.");
-            
-            const char *bootNonceKey = "com.apple.System.boot-nonce";
-            if (runCommand("/usr/sbin/nvram", bootNonceKey, NULL) != ERR_SUCCESS ||
-                strstr(lastSystemOutput.bytes, prefs.boot_nonce) == NULL) {
-                // Set boot-nonce.
-                
-                LOG("Setting boot-nonce...");
-                SETMESSAGE(NSLocalizedString(@"Failed to set boot-nonce.", nil));
-                _assert(runCommand("/usr/sbin/nvram", [NSString stringWithFormat:@"%s=%s", bootNonceKey, prefs.boot_nonce].UTF8String, NULL) == ERR_SUCCESS, message, true);
-                _assert(runCommand("/usr/sbin/nvram", [NSString stringWithFormat:@"%s=%s", kIONVRAMForceSyncNowPropertyKey, bootNonceKey].UTF8String, NULL) == ERR_SUCCESS, message, true);
-                LOG("Successfully set boot-nonce.");
-            }
-            
-            // Lock nvram.
-            
-            LOG("Locking nvram...");
-            SETMESSAGE(NSLocalizedString(@"Failed to lock nvram.", nil));
-            _assert(locknvram() == ERR_SUCCESS, message, true);
-            LOG("Successfully locked nvram.");
-            
-            INSERTSTATUS(NSLocalizedString(@"Overwrote boot nonce.\n", nil));
-        }
-    }
-    
-    UPSTAGE();
     
     {
         // Log slide.
@@ -2074,6 +2097,9 @@ out:
     if (bundledResources == nil) {
         showAlert(NSLocalizedString(@"Error", nil), NSLocalizedString(@"Bundled Resources version is missing. This build is invalid.", nil), false, false);
     }
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
 }
 
 - (void)didReceiveMemoryWarning {
