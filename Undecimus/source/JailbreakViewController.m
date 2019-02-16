@@ -840,25 +840,19 @@ void jailbreak()
         // Find offsets.
         
         LOG("Finding offsets...");
-        size_t size;
-        sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-        char *modelChar = malloc(size);
-        sysctlbyname("hw.machine", modelChar, &size, NULL, 0);
-        NSString * deviceModel = [NSString stringWithUTF8String:modelChar];
         free(modelChar);
         if ([deviceModel isEqualToString:@"iPhone6,1"] || [deviceModel isEqualToString:@"iPhone6,2"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF008903CE0 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF008872200 + kernel_slide);
-        } else if ([deviceModel isEqualToString:@"iPod7,1"]) {
-            LOG("DEVICE MAY NOT BE SUPPORTED BY THIS BUILD BUT YOU CAN TRY I GUESS", nil);
-            SETOFFSET(shenanigans, 0xFFFFFFF008903CE0 + kernel_slide);
-            SETOFFSET(kernel_task, 0xFFFFFFF008872200 + kernel_slide);
-        } else if ([deviceModel isEqualToString:@"iPad4,1"] || [deviceModel isEqualToString:@"iPad4,2"] || [deviceModel isEqualToString:@"iPad4,3"]) {
-            SETOFFSET(shenanigans, 0xFFFFFFF00890BC40 + kernel_slide);
-            SETOFFSET(kernel_task, 0xFFFFFFF00887A200 + kernel_slide);
         } else if ([deviceModel isEqualToString:@"iPhone7,1"] || [deviceModel isEqualToString:@"iPhone7,2"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF008A6EA58 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF0089DC200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPad4,1"] || [deviceModel isEqualToString:@"iPad4,2"] || [deviceModel isEqualToString:@"iPad4,3"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF00890BC40 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF00887A200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPod7,1"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF0089EDA50 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF00895C200 + kernel_slide);
         }
         
             
@@ -2090,11 +2084,24 @@ out:
     LOG("unc0ver Version: %@", appVersion());
     struct utsname kern = { 0 };
     uname(&kern);
+    modelChar = malloc(sz);
+    sysctlbyname("hw.machine", NULL, &sz, NULL, 0);
+    sysctlbyname("hw.machine", modelChar, &sz, NULL, 0);
+    deviceModel = [NSString stringWithUTF8String:modelChar];
     LOG("%s", kern.version);
     LOG("Bundled Resources Version: %@", bundledResources);
     if (jailbreakEnabled()) {
         STATUS(NSLocalizedString(@"Re-Jailbreak", nil), true, true);
     } else if (!jailbreakSupported()) {
+        STATUS(NSLocalizedString(@"Unsupported", nil), false, true);
+    } if(!([deviceModel isEqualToString:@"iPhone6,1"] ||
+             [deviceModel isEqualToString:@"iPhone6,2"] ||
+             [deviceModel isEqualToString:@"iPhone7,1"] ||
+             [deviceModel isEqualToString:@"iPhone7,2"] ||
+             [deviceModel isEqualToString:@"iPad4,1"] ||
+             [deviceModel isEqualToString:@"iPad4,2"] ||
+             [deviceModel isEqualToString:@"iPad4,3"] ||
+             [deviceModel isEqualToString:@"iPod7,1"])) {
         STATUS(NSLocalizedString(@"Unsupported", nil), false, true);
     }
     if (bundledResources == nil) {

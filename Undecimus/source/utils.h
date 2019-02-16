@@ -65,6 +65,10 @@ static inline bool init_file(const char *file, int owner, mode_t mode) {
                 } ofItemAtPath:path error:nil]);
 }
 
+static size_t sz;
+static char *modelChar;
+static NSString *deviceModel;
+
 int sha1_to_str(const unsigned char *hash, size_t hashlen, char *buf, size_t buflen);
 NSString *sha1sum(NSString *file);
 bool verifySha1Sums(NSString *sumFile);

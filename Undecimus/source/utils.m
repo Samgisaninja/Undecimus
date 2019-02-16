@@ -9,6 +9,7 @@
 #import <mach/mach.h>
 #import <sys/sysctl.h>
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <spawn.h>
 #include <copyfile.h>
@@ -627,6 +628,7 @@ bool supportsExploit(exploit_t exploit) {
 #ifdef CAN_HAS_UNSUPPORTED_EXPLOIT
     return true;
 #else /* !CAN_HAS_UNSUPPORTED_EXPLOIT */
+    
     static NSArray *list;
     static dispatch_once_t onceToken;
 
