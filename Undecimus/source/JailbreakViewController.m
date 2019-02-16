@@ -856,7 +856,7 @@ void jailbreak()
         } else if ([deviceModel isEqualToString:@"iPad4,1"] || [deviceModel isEqualToString:@"iPad4,2"] || [deviceModel isEqualToString:@"iPad4,3"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF00890BC40 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF00887A200 + kernel_slide);
-        } else if ([deviceModel isEqualToString:@"iPhone7,1"] || [deviceModel isEqualToString:@"iPhone7,2"] || [deviceModel isEqualToString:@"iPad4,3"]) {
+        } else if ([deviceModel isEqualToString:@"iPhone7,1"] || [deviceModel isEqualToString:@"iPhone7,2"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF008A6EA58 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF0089DC200 + kernel_slide);
         }
