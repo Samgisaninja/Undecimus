@@ -853,6 +853,9 @@ void jailbreak()
         } else if ([deviceModel isEqualToString:@"iPod7,1"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF0089EDA50 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF00895C200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPad4,4"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF00890BC40 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF00887A000 + kernel_slide);
         }
         
             
