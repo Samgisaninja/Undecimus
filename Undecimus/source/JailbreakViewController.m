@@ -2119,8 +2119,8 @@ out:
         showAlert(NSLocalizedString(@"Error", nil), NSLocalizedString(@"Bundled Resources version is missing. This build is invalid.", nil), false, false);
     }
     LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
-    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2 and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
-    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2 and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
 }
 
 - (void)didReceiveMemoryWarning {
