@@ -853,6 +853,12 @@ void jailbreak()
         } else if ([deviceModel isEqualToString:@"iPod7,1"]) {
             SETOFFSET(shenanigans, 0xFFFFFFF0089EDA50 + kernel_slide);
             SETOFFSET(kernel_task, 0xFFFFFFF00895C200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPad4,4"] || [deviceModel isEqualToString:@"iPad4,5"] || [deviceModel isEqualToString:@"iPad4,6"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF00890FC40 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF00887E200 + kernel_slide);
+        } else if ([deviceModel isEqualToString:@"iPad5,3"] || [deviceModel isEqualToString:@"iPad5,4"]) {
+            SETOFFSET(shenanigans, 0xFFFFFFF0077B69C0 + kernel_slide);
+            SETOFFSET(kernel_task, 0xFFFFFFF007606078 + kernel_slide);
         }
         
             
@@ -2101,15 +2107,20 @@ out:
              [deviceModel isEqualToString:@"iPad4,1"] ||
              [deviceModel isEqualToString:@"iPad4,2"] ||
              [deviceModel isEqualToString:@"iPad4,3"] ||
+             [deviceModel isEqualToString:@"iPad4,4"] ||
+             [deviceModel isEqualToString:@"iPad4,5"] ||
+             [deviceModel isEqualToString:@"iPad4,6"] ||
+             [deviceModel isEqualToString:@"iPad5,3"] ||
+             [deviceModel isEqualToString:@"iPad5,4"] ||
              [deviceModel isEqualToString:@"iPod7,1"])) {
         STATUS(NSLocalizedString(@"Unsupported", nil), false, true);
     }
     if (bundledResources == nil) {
         showAlert(NSLocalizedString(@"Error", nil), NSLocalizedString(@"Bundled Resources version is missing. This build is invalid.", nil), false, false);
     }
-    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
-    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
-    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2, and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2 and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
+    LOG("THIS IS A NONCESETTER for the iPhone 5S, iPhone 6, iPad Air, iPad mini 2, iPad Air 2 and possibly the iPod 6 on 12.1.1-12.1.2 ONLY. DO NOT use on any other device/version, if you'd like to jailbreak, get unc0ver from https://github.com/pwn20wndstuff/Undecimus/releases", nil);
 }
 
 - (void)didReceiveMemoryWarning {
